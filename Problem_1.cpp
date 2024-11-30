@@ -94,33 +94,56 @@ public:
 };
 
 int main() {
-    // Array
-    int tasks[] = { 15, 10, 20, 8, 12, 25, 18 };
-    int num_tasks = sizeof(tasks) / sizeof(tasks[0]);
+    int max_capacity = 50;
+    MinHeap min_heap(max_capacity);
 
-    // MinHeap
-    MinHeap min_heap(20);
+    int num_tasks;
+    cout << "Enter the number of tasks: ";
+    cin >> num_tasks;
+
+    cout << "Enter the priorities of the tasks: ";
     for (int i = 0; i < num_tasks; i++) {
-        min_heap.insert(tasks[i]);
+        int task_priority;
+        cin >> task_priority;
+        min_heap.insert(task_priority);
     }
 
     cout << "\n=== Initial Heap Construction ===" << endl;
     min_heap.printHeap();
 
-    //Adding new task
-    cout << "\n=== Inserting New Task with Priority 5 ===" << endl;
-    min_heap.insert(5);
-    min_heap.printHeap();
+    int choice;
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Insert a new task\n";
+        cout << "2. Extract the highest-priority task\n";
+        cout << "3. Extract the top 3 priority tasks\n";
+        cout << "4. Display the heap\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    // Extracting highest priority task
-    cout << "\n=== Extracting the Highest-Priority Task ===" << endl;
-    int min_task = min_heap.extractMin();
-    cout << "Task extracted with priority: " << min_task << endl;
-    min_heap.printHeap();
-
-    // Removing top 3
-    min_heap.extractTopThree();
-    min_heap.printHeap();
+        if (choice == 1) {
+            int new_priority;
+            cout << "Enter the priority of the new task: ";
+            cin >> new_priority;
+            min_heap.insert(new_priority);
+            cout << "Task inserted successfully.\n";
+        } else if (choice == 2) {
+            int min_task = min_heap.extractMin();
+            if (min_task == INT_MAX)
+                cout << "The heap is empty.\n";
+            else
+                cout << "Task extracted with priority: " << min_task << endl;
+        } else if (choice == 3) {
+            min_heap.extractTopThree();
+        } else if (choice == 4) {
+            min_heap.printHeap();
+        } else if (choice == 5) {
+            cout << "Exiting program. Goodbye!\n";
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 5);
 
     return 0;
 }
