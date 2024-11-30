@@ -4,124 +4,123 @@ using namespace std;
 
 class MinHeap {
 private:
-    int* heap;      // Array to store heap elements
-    int capacity;   // Maximum capacity of the heap
-    int size;       // Current size of the heap
+    int* heap_array;    // Array to store heap elements
+    int max_capacity;   // Maximum capacity of the heap
+    int current_size;   // Current size of the heap
 
-    // Helper functions
-    int parent(int i) { return (i - 1) / 2; }
-    int leftChild(int i) { return 2 * i + 1; }
-    int rightChild(int i) { return 2 * i + 2; }
+    // Helpers
+    int parent(int index) { return (index - 1) / 2; }
+    int leftChild(int index) { return 2 * index + 1; }
+    int rightChild(int index) { return 2 * index + 2; }
 
-    void heapifyDown(int i) {
-        int smallest = i;
-        int left = leftChild(i);
-        int right = rightChild(i);
+    void heapifyDown(int index) {
+        int smallest = index;
+        int left = leftChild(index);
+        int right = rightChild(index);
 
-        if (left < size && heap[left] < heap[smallest])
+        if (left < current_size && heap_array[left] < heap_array[smallest])
             smallest = left;
-        if (right < size && heap[right] < heap[smallest])
+        if (right < current_size && heap_array[right] < heap_array[smallest])
             smallest = right;
 
-        if (smallest != i) {
-            swap(heap[i], heap[smallest]);
+        if (smallest != index) {
+            swap(heap_array[index], heap_array[smallest]);
             heapifyDown(smallest);
         }
     }
 
-    void heapifyUp(int i) {
-        while (i != 0 && heap[parent(i)] > heap[i]) {
-            swap(heap[i], heap[parent(i)]);
-            i = parent(i);
+    void heapifyUp(int index) {
+        while (index != 0 && heap_array[parent(index)] > heap_array[index]) {
+            swap(heap_array[index], heap_array[parent(index)]);
+            index = parent(index);
         }
     }
 
 public:
-    MinHeap(int capacity) {
-        this->capacity = capacity;
-        heap = new int[capacity];
-        size = 0;
+    MinHeap(int max_capacity) {
+        this->max_capacity = max_capacity;
+        heap_array = new int[max_capacity];
+        current_size = 0;
     }
 
     ~MinHeap() {
-        delete[] heap;
+        delete[] heap_array;
     }
 
     void insert(int key) {
-        if (size == capacity) {
+        if (current_size == max_capacity) {
             cout << "Heap overflow!" << endl;
             return;
         }
 
-        size++;
-        int i = size - 1;
-        heap[i] = key;
-        heapifyUp(i);
+        current_size++;
+        int index = current_size - 1;
+        heap_array[index] = key;
+        heapifyUp(index);
     }
 
     int extractMin() {
-        if (size <= 0)
+        if (current_size <= 0)
             return INT_MAX;
 
-        if (size == 1) {
-            size--;
-            return heap[0];
+        if (current_size == 1) {
+            current_size--;
+            return heap_array[0];
         }
 
-        int root = heap[0];
-        heap[0] = heap[size - 1];
-        size--;
+        int root = heap_array[0];
+        heap_array[0] = heap_array[current_size - 1];
+        current_size--;
         heapifyDown(0);
 
         return root;
     }
 
     void extractTopThree() {
-        cout << "Top 3 priority tasks: ";
-        for (int i = 0; i < 3 && size > 0; ++i) {
-            cout << extractMin() << " ";
+        cout << "\n=== Extracting Top 3 Priority Tasks ===" << endl;
+        for (int i = 0; i < 3 && current_size > 0; ++i) {
+            cout << "- Task with priority: " << extractMin() << endl;
         }
-        cout << endl;
+        cout << "=======================================" << endl;
     }
 
     void printHeap() {
-        cout << "Heap: ";
-        for (int i = 0; i < size; i++) {
-            cout << heap[i] << " ";
+        cout << "Heap Content: ";
+        for (int i = 0; i < current_size; i++) {
+            cout << heap_array[i] << " ";
         }
         cout << endl;
     }
 };
 
 int main() {
-    // Input array
+    // Array
     int tasks[] = { 15, 10, 20, 8, 12, 25, 18 };
-    int n = sizeof(tasks) / sizeof(tasks[0]);
+    int num_tasks = sizeof(tasks) / sizeof(tasks[0]);
 
-    // Build the MinHeap
-    MinHeap minHeap(20);
-    for (int i = 0; i < n; i++) {
-        minHeap.insert(tasks[i]);
+    // MinHeap
+    MinHeap min_heap(20);
+    for (int i = 0; i < num_tasks; i++) {
+        min_heap.insert(tasks[i]);
     }
 
-    cout << "Heap after building: ";
-    minHeap.printHeap();
+    cout << "\n=== Initial Heap Construction ===" << endl;
+    min_heap.printHeap();
 
-    // Insert new task with priority 5
-    minHeap.insert(5);
-    cout << "Heap after inserting 5: ";
-    minHeap.printHeap();
+    //Adding new task
+    cout << "\n=== Inserting New Task with Priority 5 ===" << endl;
+    min_heap.insert(5);
+    min_heap.printHeap();
 
-    // Extract the highest-priority task
-    int minTask = minHeap.extractMin();
-    cout << "Extracted highest-priority task: " << minTask << endl;
-    cout << "Heap after extracting the minimum: ";
-    minHeap.printHeap();
+    // Extracting highest priority task
+    cout << "\n=== Extracting the Highest-Priority Task ===" << endl;
+    int min_task = min_heap.extractMin();
+    cout << "Task extracted with priority: " << min_task << endl;
+    min_heap.printHeap();
 
-    // Extract the top 3 priority tasks
-    minHeap.extractTopThree();
-    cout << "Heap after extracting top 3 tasks: ";
-    minHeap.printHeap();
+    // Removing top 3
+    min_heap.extractTopThree();
+    min_heap.printHeap();
 
     return 0;
 }
