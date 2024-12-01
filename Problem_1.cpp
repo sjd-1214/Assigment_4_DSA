@@ -8,19 +8,19 @@ private:
     int max_capacity;
     int current_size;
 
-    int parent(int index) { return (index - 1) / 2; }
-    int left_child(int index) { return 2 * index + 1; }
-    int right_child(int index) { return 2 * index + 2; }
+    int get_parent_index(int index) { return (index - 1) / 2; }
+    int get_left_child_index(int index) { return 2 * index + 1; }
+    int get_right_child_index(int index) { return 2 * index + 2; }
 
     void heapify_down(int index) {
         int smallest = index;
-        int left = left_child(index);
-        int right = right_child(index);
+        int left_child = get_left_child_index(index);
+        int right_child = get_right_child_index(index);
 
-        if (left < current_size && heap_array[left] < heap_array[smallest])
-            smallest = left;
-        if (right < current_size && heap_array[right] < heap_array[smallest])
-            smallest = right;
+        if (left_child < current_size && heap_array[left_child] < heap_array[smallest])
+            smallest = left_child;
+        if (right_child < current_size && heap_array[right_child] < heap_array[smallest])
+            smallest = right_child;
 
         if (smallest != index) {
             swap(heap_array[index], heap_array[smallest]);
@@ -29,9 +29,9 @@ private:
     }
 
     void heapify_up(int index) {
-        while (index != 0 && heap_array[parent(index)] > heap_array[index]) {
-            swap(heap_array[index], heap_array[parent(index)]);
-            index = parent(index);
+        while (index != 0 && heap_array[get_parent_index(index)] > heap_array[index]) {
+            swap(heap_array[index], heap_array[get_parent_index(index)]);
+            index = get_parent_index(index);
         }
     }
 
@@ -46,19 +46,20 @@ public:
         delete[] heap_array;
     }
 
-    void insert(int key) {
+    void insert_task(int priority) {
         if (current_size == max_capacity) {
-            cout << "heap overflow!" << endl;
+            cout << "Error: Heap Overflow! Cannot insert new task.\n";
             return;
         }
 
         current_size++;
         int index = current_size - 1;
-        heap_array[index] = key;
+        heap_array[index] = priority;
         heapify_up(index);
+        cout << "Task with priority " << priority << " inserted successfully.\n";
     }
 
-    int extract_min() {
+    int extract_min_task() {
         if (current_size <= 0)
             return INT_MAX;
 
@@ -67,24 +68,24 @@ public:
             return heap_array[0];
         }
 
-        int root = heap_array[0];
+        int root_priority = heap_array[0];
         heap_array[0] = heap_array[current_size - 1];
         current_size--;
         heapify_down(0);
 
-        return root;
+        return root_priority;
     }
 
-    void extract_top_three() {
-        cout << "\n=== extracting top 3 priority tasks ===" << endl;
+    void extract_top_three_tasks() {
+        cout << "\nExtracting Top 3 Priority Tasks:\n";
         for (int i = 0; i < 3 && current_size > 0; ++i) {
-            cout << "- task with priority: " << extract_min() << endl;
+            cout << "   Task with priority: " << extract_min_task() << endl;
         }
-        cout << "=======================================" << endl;
+        cout << "-------------------------------------\n";
     }
 
-    void print_heap() {
-        cout << "heap content: ";
+    void display_heap() {
+        cout << "Current Heap: ";
         for (int i = 0; i < current_size; i++) {
             cout << heap_array[i] << " ";
         }
@@ -93,54 +94,62 @@ public:
 };
 
 int main() {
-    int max_capacity = 50;
+    const int max_capacity = 50;
     min_heap task_heap(max_capacity);
 
     int num_tasks;
-    cout << "enter the number of tasks: ";
+    cout << "Enter the number of tasks: ";
     cin >> num_tasks;
 
-    cout << "enter the priorities of the tasks: ";
+    cout << "Enter the priorities of the tasks: ";
     for (int i = 0; i < num_tasks; i++) {
         int task_priority;
         cin >> task_priority;
-        task_heap.insert(task_priority);
+        task_heap.insert_task(task_priority);
     }
 
-    cout << "\n=== initial heap construction ===" << endl;
-    task_heap.print_heap();
+    cout << "\nInitial Heap Constructed Successfully!\n";
+    task_heap.display_heap();
 
     int choice;
     do {
-        cout << "\nmenu:\n";
-        cout << "1. insert a new task\n";
-        cout << "2. extract the highest-priority task\n";
-        cout << "3. extract the top 3 priority tasks\n";
-        cout << "4. display the heap\n";
-        cout << "5. exit\n";
-        cout << "enter your choice: ";
+        cout << "\n------------- Menu -------------\n";
+        cout << "1. Insert a New Task\n";
+        cout << "2. Extract the Highest-Priority Task\n";
+        cout << "3. Extract the Top 3 Priority Tasks\n";
+        cout << "4. Display the Heap\n";
+        cout << "5. Exit\n";
+        cout << "---------------------------------\n";
+        cout << "Enter your choice: ";
         cin >> choice;
 
-        if (choice == 1) {
-            int new_priority;
-            cout << "enter the priority of the new task: ";
-            cin >> new_priority;
-            task_heap.insert(new_priority);
-            cout << "task inserted successfully.\n";
-        } else if (choice == 2) {
-            int min_task = task_heap.extract_min();
-            if (min_task == INT_MAX)
-                cout << "the heap is empty.\n";
-            else
-                cout << "task extracted with priority: " << min_task << endl;
-        } else if (choice == 3) {
-            task_heap.extract_top_three();
-        } else if (choice == 4) {
-            task_heap.print_heap();
-        } else if (choice == 5) {
-            cout << "exiting program. goodbye!\n";
-        } else {
-            cout << "invalid choice. please try again.\n";
+        switch (choice) {
+            case 1: {
+                int new_priority;
+                cout << "Enter the priority of the new task: ";
+                cin >> new_priority;
+                task_heap.insert_task(new_priority);
+                break;
+            }
+            case 2: {
+                int min_priority = task_heap.extract_min_task();
+                if (min_priority == INT_MAX)
+                    cout << "The heap is empty. No tasks to extract.\n";
+                else
+                    cout << "Task extracted with priority: " << min_priority << endl;
+                break;
+            }
+            case 3:
+                task_heap.extract_top_three_tasks();
+                break;
+            case 4:
+                task_heap.display_heap();
+                break;
+            case 5:
+                cout << "Exiting program. Goodbye!\n";
+                break;
+            default:
+                cout << "Invalid choice! Please try again.\n";
         }
     } while (choice != 5);
 

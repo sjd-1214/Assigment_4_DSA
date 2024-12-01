@@ -5,7 +5,7 @@ using namespace std;
 
 const int num_cities = 4;
 
-int calculate_route_cost(int distance_matrix[num_cities][num_cities], int route[], int num_cities) {
+int calculate_route_cost(int distance_matrix[num_cities][num_cities], int route[]) {
     int total_cost = 0;
     for (int i = 0; i < num_cities - 1; i++) {
         total_cost += distance_matrix[route[i]][route[i + 1]];
@@ -20,8 +20,8 @@ void solve_tsp(int distance_matrix[num_cities][num_cities]) {
         city_order[i - 1] = i;
     }
 
-    int min_cost = INT_MAX;
-    int best_route[num_cities];
+    int minimum_cost = INT_MAX;
+    int optimal_route[num_cities];
 
     do {
         int current_route[num_cities];
@@ -30,24 +30,34 @@ void solve_tsp(int distance_matrix[num_cities][num_cities]) {
             current_route[i + 1] = city_order[i];
         }
 
-        int current_cost = calculate_route_cost(distance_matrix, current_route, num_cities);
+        int current_cost = calculate_route_cost(distance_matrix, current_route);
 
-        if (current_cost < min_cost) {
-            min_cost = current_cost;
+        if (current_cost < minimum_cost) {
+            minimum_cost = current_cost;
             for (int i = 0; i < num_cities; i++) {
-                best_route[i] = current_route[i];
+                optimal_route[i] = current_route[i];
             }
         }
     } while (next_permutation(city_order, city_order + num_cities - 1));
 
-    cout << "===== traveling salesman problem (tsp) =====\n";
-    cout << "shortest route: ";
+    cout << "\n-------------------------------------------\n";
+    cout << "             Traveling Salesman             \n";
+    cout << "-------------------------------------------\n";
+    cout << "Shortest Route: ";
     for (int i = 0; i < num_cities; i++) {
-        cout << best_route[i] << " -> ";
+        cout << optimal_route[i] << " -> ";
     }
-    cout << best_route[0] << endl;
-    cout << "total cost: " << min_cost << "\n";
-    cout << "===========================================\n";
+    cout << optimal_route[0] << endl;
+    cout << "Total Cost: " << minimum_cost << "\n";
+    cout << "-------------------------------------------\n";
+}
+
+void display_menu() {
+    cout << "\n======== Traveling Salesman Problem ========\n";
+    cout << "1. Solve TSP (Default Distance Matrix)\n";
+    cout << "2. Exit\n";
+    cout << "============================================\n";
+    cout << "Enter your choice: ";
 }
 
 int main() {
@@ -58,8 +68,26 @@ int main() {
         {20, 25, 30, 0}
     };
 
-    cout << "solving tsp using brute force...\n";
-    solve_tsp(distance_matrix);
+    int choice;
+    do {
+        display_menu();
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "\nSolving TSP using brute force...\n";
+                solve_tsp(distance_matrix);
+                break;
+
+            case 2:
+                cout << "\nExiting program. Goodbye!\n";
+                break;
+
+            default:
+                cout << "\nInvalid choice. Please try again.\n";
+                break;
+        }
+    } while (choice != 2);
 
     return 0;
 }
