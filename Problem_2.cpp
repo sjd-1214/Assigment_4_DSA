@@ -3,61 +3,55 @@
 #include <algorithm>
 using namespace std;
 
-#define V 4 // Number of cities
+#define NumCities 4
 
-// Function to calculate the cost of a route
-int calculateRouteCost(int graph[V][V], int route[], int num_cities) {
-    int total_cost = 0;
-    for (int i = 0; i < num_cities - 1; i++) {
-        total_cost += graph[route[i]][route[i + 1]];
+int calculateRouteCost(int distanceMatrix[NumCities][NumCities], int route[], int numCities) {
+    int totalCost = 0;
+    for (int i = 0; i < numCities - 1; i++) {
+        totalCost += distanceMatrix[route[i]][route[i + 1]];
     }
-    // Add the cost to return to the starting city
-    total_cost += graph[route[num_cities - 1]][route[0]];
-    return total_cost;
+    totalCost += distanceMatrix[route[numCities - 1]][route[0]];
+    return totalCost;
 }
 
-// Function to solve TSP using brute force
-void solveTSP(int graph[V][V]) {
-    int cities[V - 1]; // Array to store the cities (excluding the starting city 0)
-    for (int i = 1; i < V; i++) { // Initialize cities array
-        cities[i - 1] = i;
+void solveTsp(int distanceMatrix[NumCities][NumCities]) {
+    int cityOrder[NumCities - 1];
+    for (int i = 1; i < NumCities; i++) {
+        cityOrder[i - 1] = i;
     }
 
-    int min_cost = INT_MAX;
-    int best_route[V];
+    int minCost = INT_MAX;
+    int bestRoute[NumCities];
 
-    // Generate all permutations of the cities array
     do {
-        int current_route[V];
-        current_route[0] = 0; // Start at city 0
-        for (int i = 0; i < V - 1; i++) {
-            current_route[i + 1] = cities[i];
+        int currentRoute[NumCities];
+        currentRoute[0] = 0;
+        for (int i = 0; i < NumCities - 1; i++) {
+            currentRoute[i + 1] = cityOrder[i];
         }
 
-        // Calculate the cost of the current route
-        int current_cost = calculateRouteCost(graph, current_route, V);
+        int currentCost = calculateRouteCost(distanceMatrix, currentRoute, NumCities);
 
-        // Update the minimum cost and best route
-        if (current_cost < min_cost) {
-            min_cost = current_cost;
-            for (int i = 0; i < V; i++) {
-                best_route[i] = current_route[i];
+        if (currentCost < minCost) {
+            minCost = currentCost;
+            for (int i = 0; i < NumCities; i++) {
+                bestRoute[i] = currentRoute[i];
             }
         }
-    } while (next_permutation(cities, cities + V - 1));
+    } while (next_permutation(cityOrder, cityOrder + NumCities - 1));
 
-    // Output the result
+    cout << "===== Traveling Salesman Problem (TSP) =====\n";
     cout << "Shortest Route: ";
-    for (int i = 0; i < V; i++) {
-        cout << best_route[i] << " ";
+    for (int i = 0; i < NumCities; i++) {
+        cout << bestRoute[i] << " -> ";
     }
-    cout << best_route[0]; // Return to the starting city
-    cout << "\nTotal Cost: " << min_cost << endl;
+    cout << bestRoute[0] << endl;
+    cout << "Total Cost: " << minCost << "\n";
+    cout << "===========================================\n";
 }
 
 int main() {
-    // Distance matrix
-    int graph[V][V] = {
+    int distanceMatrix[NumCities][NumCities] = {
         {0, 10, 15, 20},
         {10, 0, 35, 25},
         {15, 35, 0, 30},
@@ -65,7 +59,7 @@ int main() {
     };
 
     cout << "Solving TSP using Brute Force...\n";
-    solveTSP(graph);
+    solveTsp(distanceMatrix);
 
     return 0;
 }
