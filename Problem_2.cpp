@@ -3,63 +3,63 @@
 #include <algorithm>
 using namespace std;
 
-#define NumCities 4
+const int num_cities = 4;
 
-int calculateRouteCost(int distanceMatrix[NumCities][NumCities], int route[], int numCities) {
-    int totalCost = 0;
-    for (int i = 0; i < numCities - 1; i++) {
-        totalCost += distanceMatrix[route[i]][route[i + 1]];
+int calculate_route_cost(int distance_matrix[num_cities][num_cities], int route[], int num_cities) {
+    int total_cost = 0;
+    for (int i = 0; i < num_cities - 1; i++) {
+        total_cost += distance_matrix[route[i]][route[i + 1]];
     }
-    totalCost += distanceMatrix[route[numCities - 1]][route[0]];
-    return totalCost;
+    total_cost += distance_matrix[route[num_cities - 1]][route[0]];
+    return total_cost;
 }
 
-void solveTsp(int distanceMatrix[NumCities][NumCities]) {
-    int cityOrder[NumCities - 1];
-    for (int i = 1; i < NumCities; i++) {
-        cityOrder[i - 1] = i;
+void solve_tsp(int distance_matrix[num_cities][num_cities]) {
+    int city_order[num_cities - 1];
+    for (int i = 1; i < num_cities; i++) {
+        city_order[i - 1] = i;
     }
 
-    int minCost = INT_MAX;
-    int bestRoute[NumCities];
+    int min_cost = INT_MAX;
+    int best_route[num_cities];
 
     do {
-        int currentRoute[NumCities];
-        currentRoute[0] = 0;
-        for (int i = 0; i < NumCities - 1; i++) {
-            currentRoute[i + 1] = cityOrder[i];
+        int current_route[num_cities];
+        current_route[0] = 0;
+        for (int i = 0; i < num_cities - 1; i++) {
+            current_route[i + 1] = city_order[i];
         }
 
-        int currentCost = calculateRouteCost(distanceMatrix, currentRoute, NumCities);
+        int current_cost = calculate_route_cost(distance_matrix, current_route, num_cities);
 
-        if (currentCost < minCost) {
-            minCost = currentCost;
-            for (int i = 0; i < NumCities; i++) {
-                bestRoute[i] = currentRoute[i];
+        if (current_cost < min_cost) {
+            min_cost = current_cost;
+            for (int i = 0; i < num_cities; i++) {
+                best_route[i] = current_route[i];
             }
         }
-    } while (next_permutation(cityOrder, cityOrder + NumCities - 1));
+    } while (next_permutation(city_order, city_order + num_cities - 1));
 
-    cout << "===== Traveling Salesman Problem (TSP) =====\n";
-    cout << "Shortest Route: ";
-    for (int i = 0; i < NumCities; i++) {
-        cout << bestRoute[i] << " -> ";
+    cout << "===== traveling salesman problem (tsp) =====\n";
+    cout << "shortest route: ";
+    for (int i = 0; i < num_cities; i++) {
+        cout << best_route[i] << " -> ";
     }
-    cout << bestRoute[0] << endl;
-    cout << "Total Cost: " << minCost << "\n";
+    cout << best_route[0] << endl;
+    cout << "total cost: " << min_cost << "\n";
     cout << "===========================================\n";
 }
 
 int main() {
-    int distanceMatrix[NumCities][NumCities] = {
+    int distance_matrix[num_cities][num_cities] = {
         {0, 10, 15, 20},
         {10, 0, 35, 25},
         {15, 35, 0, 30},
         {20, 25, 30, 0}
     };
 
-    cout << "Solving TSP using Brute Force...\n";
-    solveTsp(distanceMatrix);
+    cout << "solving tsp using brute force...\n";
+    solve_tsp(distance_matrix);
 
     return 0;
 }

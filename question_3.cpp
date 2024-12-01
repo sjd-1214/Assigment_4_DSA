@@ -3,28 +3,24 @@ using namespace std;
 
 const int max_cap = 10;
 
-class Queue
-{
+class queue_ds {
 private:
     int queue[max_cap];
     int front, rear;
 
 public:
-    Queue()
-    {
+    queue_ds() {
         front = -1;
         rear = -1;
     }
-    bool empty()
-    {
+
+    bool is_empty() {
         return front == -1;
     }
 
-    void enqueue(int val)
-    {
-        if (rear == max_cap - 1)
-        {
-            cout << "Queue is full!" << endl;
+    void enqueue(int val) {
+        if (rear == max_cap - 1) {
+            cout << "queue is full!" << endl;
             return;
         }
         if (front == -1)
@@ -32,12 +28,9 @@ public:
         queue[++rear] = val;
     }
 
-    // Remove and return an element from the queue
-    int dequeue()
-    {
-        if (empty())
-        {
-            cout << "Queue is empty!" << endl;
+    int dequeue() {
+        if (is_empty()) {
+            cout << "queue is empty!" << endl;
             return -1;
         }
         int val = queue[front++];
@@ -47,55 +40,45 @@ public:
     }
 };
 
-class Stack
-{
+class stack_ds {
 private:
     int stack[max_cap];
     int top;
 
 public:
-    Stack()
-    {
+    stack_ds() {
         top = -1;
     }
 
-    bool empty()
-    {
+    bool is_empty() {
         return top == -1;
     }
 
-    void push(int val)
-    {
-        if (top == max_cap - 1)
-        {
-            cout << "Stack is full!" << endl;
+    void push(int val) {
+        if (top == max_cap - 1) {
+            cout << "stack is full!" << endl;
             return;
         }
         stack[++top] = val;
     }
 
-    int pop()
-    {
-        if (empty())
-        {
-            cout << "Stack is empty!" << endl;
+    int pop() {
+        if (is_empty()) {
+            cout << "stack is empty!" << endl;
             return -1;
         }
         return stack[top--];
     }
 };
 
-class Graph
-{
+class graph_ds {
 private:
     int matrix[max_cap][max_cap];
     char users[max_cap];
-    int usr_count;
+    int user_count;
 
-    int get_user_num(char user)
-    {
-        for (int i = 0; i < usr_count; ++i)
-        {
+    int get_user_index(char user) {
+        for (int i = 0; i < user_count; ++i) {
             if (users[i] == user)
                 return i;
         }
@@ -103,166 +86,142 @@ private:
     }
 
 public:
-    Graph()
-    {
-        usr_count = 0;
-        for (int i = 0; i < max_cap; ++i)
-        {
-            for (int j = 0; j < max_cap; ++j)
-            {
+    graph_ds() {
+        user_count = 0;
+        for (int i = 0; i < max_cap; ++i) {
+            for (int j = 0; j < max_cap; ++j) {
                 matrix[i][j] = 0;
             }
         }
     }
 
-    void add_new_user(char user)
-    {
-        if (usr_count < max_cap)
-        {
-            users[usr_count++] = user;
+    void add_new_user(char user) {
+        if (user_count < max_cap) {
+            users[user_count++] = user;
         }
     }
 
-    void add_new_edge(char u, char v)
-    {
-        int x = get_user_num(u);
-        int y = get_user_num(v);
+    void add_new_edge(char u, char v) {
+        int x = get_user_index(u);
+        int y = get_user_index(v);
 
-        if (x != -1 && y != -1)
-        {
+        if (x != -1 && y != -1) {
             matrix[x][y] = 1;
             matrix[y][x] = 1;
         }
     }
 
-    void BFS(char start)
-    {
-        int starting = get_user_num(start);
+    void bfs(char start) {
+        int starting = get_user_index(start);
         if (starting == -1)
             return;
 
-        bool visited_arr[max_cap] = {false};
-        Queue q;
-        char bfsOrder[max_cap];
-        int bfsIndex = 0;
+        bool visited[max_cap] = {false};
+        queue_ds q;
+        char bfs_order[max_cap];
+        int bfs_index = 0;
 
         q.enqueue(starting);
-        visited_arr[starting] = true;
+        visited[starting] = true;
 
-        while (!q.empty())
-        {
+        while (!q.is_empty()) {
             int temp = q.dequeue();
-            bfsOrder[bfsIndex++] = users[temp];
+            bfs_order[bfs_index++] = users[temp];
 
-            for (int i = 0; i < usr_count; ++i)
-            {
-                if (matrix[temp][i] == 1 && !visited_arr[i])
-                {
+            for (int i = 0; i < user_count; ++i) {
+                if (matrix[temp][i] == 1 && !visited[i]) {
                     q.enqueue(i);
-                    visited_arr[i] = true;
+                    visited[i] = true;
                 }
             }
         }
 
-        cout << "BFS Traversal: ";
-        for (int i = 0; i < bfsIndex; ++i)
-        {
-            cout << bfsOrder[i] << " ";
+        cout << "bfs traversal: ";
+        for (int i = 0; i < bfs_index; ++i) {
+            cout << bfs_order[i] << " ";
         }
         cout << endl;
     }
 
-    void DFS(char start)
-    {
-        int starting = get_user_num(start);
+    void dfs(char start) {
+        int starting = get_user_index(start);
         if (starting == -1)
             return;
 
-        bool visited_arr[max_cap] = {false};
-        Stack s;
-        char dfsOrder[max_cap];
-        int dfsIndex = 0;
+        bool visited[max_cap] = {false};
+        stack_ds s;
+        char dfs_order[max_cap];
+        int dfs_index = 0;
 
         s.push(starting);
 
-        while (!s.empty())
-        {
+        while (!s.is_empty()) {
             int temp = s.pop();
 
-            if (!visited_arr[temp])
-            {
-                dfsOrder[dfsIndex++] = users[temp];
-                visited_arr[temp] = true;
+            if (!visited[temp]) {
+                dfs_order[dfs_index++] = users[temp];
+                visited[temp] = true;
 
-                for (int i = usr_count - 1; i >= 0; --i)
-                {
-                    if (matrix[temp][i] == 1 && !visited_arr[i])
-                    {
+                for (int i = user_count - 1; i >= 0; --i) {
+                    if (matrix[temp][i] == 1 && !visited[i]) {
                         s.push(i);
                     }
                 }
             }
         }
 
-        cout << "DFS Traversal: ";
-        for (int i = 0; i < dfsIndex; ++i)
-        {
-            cout << dfsOrder[i] << " ";
+        cout << "dfs traversal: ";
+        for (int i = 0; i < dfs_index; ++i) {
+            cout << dfs_order[i] << " ";
         }
         cout << endl;
     }
 
-    void shortestPath(char start, char end)
-    {
-        int starting = get_user_num(start);
-        int endIndex = get_user_num(end);
-        if (starting == -1 || endIndex == -1)
+    void shortest_path(char start, char end) {
+        int starting = get_user_index(start);
+        int end_index = get_user_index(end);
+        if (starting == -1 || end_index == -1)
             return;
-        bool visited_arr[max_cap] = {false};
-        Queue q;
+
+        bool visited[max_cap] = {false};
+        queue_ds q;
         int parent[max_cap];
         for (int i = 0; i < max_cap; ++i)
             parent[i] = -1;
 
         q.enqueue(starting);
-        visited_arr[starting] = true;
+        visited[starting] = true;
 
-        while (!q.empty())
-        {
+        while (!q.is_empty()) {
             int temp = q.dequeue();
 
-            for (int i = 0; i < usr_count; ++i)
-            {
-                if (matrix[temp][i] == 1 && !visited_arr[i])
-                {
+            for (int i = 0; i < user_count; ++i) {
+                if (matrix[temp][i] == 1 && !visited[i]) {
                     q.enqueue(i);
-                    visited_arr[i] = true;
+                    visited[i] = true;
                     parent[i] = temp;
 
-                    if (i == endIndex)
+                    if (i == end_index)
                         break;
                 }
             }
         }
 
-        int path[max_cap], pathIndex = 0;
-        for (int at = endIndex; at != -1; at = parent[at])
-        {
-            path[pathIndex++] = at;
+        int path[max_cap], path_index = 0;
+        for (int at = end_index; at != -1; at = parent[at]) {
+            path[path_index++] = at;
         }
 
-        cout << "Shortest Path from " << start << " to " << end << ": ";
-        for (int i = pathIndex - 1; i >= 0; --i)
-        {
+        cout << "shortest path from " << start << " to " << end << ": ";
+        for (int i = path_index - 1; i >= 0; --i) {
             cout << users[path[i]] << " ";
         }
         cout << endl;
     }
 };
 
-int main()
-{
-    Graph g;
+int main() {
+    graph_ds g;
 
     g.add_new_user('A');
     g.add_new_user('B');
@@ -277,10 +236,9 @@ int main()
     g.add_new_edge('B', 'E');
     g.add_new_edge('C', 'F');
 
-    g.BFS('A');
-    g.DFS('A');
-
-    g.shortestPath('A', 'E');
+    g.bfs('A');
+    g.dfs('A');
+    g.shortest_path('A', 'E');
 
     return 0;
 }
